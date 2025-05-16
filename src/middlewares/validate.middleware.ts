@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import logger from "utils/logger";
 import { ZodError, ZodSchema, z } from "zod";
 
 // Route param ID validation
@@ -55,13 +56,13 @@ const validate = (schema?: ZodSchema | {}, options?: ValidationOptions) => {
 
       next();
     } catch (err) {
+      logger.error(err, "Internal Server Error");
       if (err instanceof ZodError) {
         res.status(400).json({
           message: "Validation Error",
           errors: err.errors,
         });
       } else {
-        console.error("Unexpected error:", err);
         res.status(500).json({ message: "Internal Server Error" });
       }
     }
